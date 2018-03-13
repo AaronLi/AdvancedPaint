@@ -16,6 +16,7 @@ class Window:
         self.difX, self.difY = 0, 0
         self.minimized = False
         self.maximized = False
+        self.closed = False
         self.previousSize = width, height
         self.previousPos = self.position
     def draw(self, surface: Surface, mousePos, mouseButtons):
@@ -61,13 +62,19 @@ class Window:
                     self.difX = self.position[0] - mousePos[0]
                     self.difY = self.position[1] - mousePos[1]
                 self.position = [mousePos[0] + self.difX, mousePos[1] + self.difY]
+                if self.maximized:
+                    self.unMaximize()
+                    self.position = [0,0]
+                    self.resize(availableSpace.size)
             if self.minimizeButtonRect.collidepoint(canvasMousePos) and mouseButtons[0]:
                 self.minimize()
-            if self.growButtonRect.collidepoint(canvasMousePos) and mouseButtons[0]:
+            elif self.growButtonRect.collidepoint(canvasMousePos) and mouseButtons[0]:
                 if self.maximized:
                     self.unMaximize()
                 else:
                     self.maximize(availableSpace)
+            elif self.closeButtonRect.collidepoint(canvasMousePos) and mouseButtons[0]:
+                self.close()
         self.lastButtonState = mouseButtons
     def minimize(self):
         self.minimized = True
@@ -88,6 +95,8 @@ class Window:
         self.closeButtonRect = Rect(self.getWindowWidth() - 61, 0, 60, 20)
         self.growButtonRect = Rect(self.getWindowWidth() - 122, 0, 60, 20)
         self.minimizeButtonRect = Rect(self.getWindowWidth() - 183, 0, 60, 20)
+    def close(self):
+        self.closed = True
     def getWindowWidth(self):
         return self.windowCanvas.get_width()
 

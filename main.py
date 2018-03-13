@@ -1,10 +1,13 @@
 from pygame import *
-import lib.window
+import lib.window, lib.deskenv
 
 running = True
 screen = display.set_mode((1280,720),RESIZABLE)
 canvas = lib.window.Window()
-windows = []
+testWindow2 = lib.window.Window("Heyyo Big window",70,70,400,200)
+desktop = lib.deskenv.DeskEnv(screen.get_size())
+desktop.addWindow(canvas)
+desktop.addWindow(testWindow2)
 while running:
     for e in event.get():
         if e.type==QUIT:
@@ -15,12 +18,13 @@ while running:
             pass
         elif e.type == VIDEORESIZE:
             screen = display.set_mode(e.size,RESIZABLE)
+            desktop.resize(e.size)
     mPos = mouse.get_pos()
     mb = mouse.get_pressed()
     screen.fill((255,255,255))
 
-    canvas.draw(screen,mPos,mb)
-    canvas.update(mPos,mb,Rect(0,0,screen.get_width(),screen.get_height()-40))
+    desktop.draw(screen, mPos,mb)
+    desktop.update(mPos,mb)
 
     display.flip()
     oMPos = mPos
