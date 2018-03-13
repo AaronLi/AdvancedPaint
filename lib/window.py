@@ -19,16 +19,18 @@ class Window:
         self.closed = False
         self.previousSize = width, height
         self.previousPos = self.position
-    def draw(self, surface: Surface, mousePos, mouseButtons):
+    def draw(self, surface: Surface, mousePos, mouseButtons, focused):
         mousePos = (mousePos[0] - self.position[0], mousePos[1] - self.position[1])
 
         self.windowCanvas.fill((0, 0, 0))
-        draw.rect(self.windowCanvas, (240, 240, 240), (0, 0, self.getWindowWidth(), 20))
-        draw.rect(self.windowCanvas, (240, 240, 240), (0, 0, self.getWindowWidth(), self.getWindowHeight()),4)
-
-        windowTitleRender = lato.render(self.windowTitle, True, (180, 180, 180))
+        if focused:
+            draw.rect(self.windowCanvas, (240, 240, 240), (0, 0, self.getWindowWidth(), 20))
+            draw.rect(self.windowCanvas, (240, 240, 240), (0, 0, self.getWindowWidth(), self.getWindowHeight()),4)
+        else:
+            draw.rect(self.windowCanvas, (250, 250, 250), (0, 0, self.getWindowWidth(), 20))
+            draw.rect(self.windowCanvas, (250, 250, 250), (0, 0, self.getWindowWidth(), self.getWindowHeight()), 4)
+        windowTitleRender = lato.render(self.windowTitle, True, (170, 170, 170) if focused else (200,200,200))
         self.windowCanvas.blit(windowTitleRender, (2, 0))
-
         if self.closeButtonRect.collidepoint(mousePos):
             if mouseButtons[0]:
                 draw.rect(self.windowCanvas, (200, 0, 0), self.closeButtonRect)
@@ -54,10 +56,10 @@ class Window:
         if not self.minimized:
             surface.blit(self.windowCanvas, self.position)
 
-    def update(self, mousePos: tuple, mouseButtons: tuple, availableSpace : Rect):
+    def update(self, mousePos: tuple, mouseButtons: tuple, availableSpace : Rect, focused :bool):
         canvasMousePos = (mousePos[0] - self.position[0], mousePos[1] - self.position[1])
         if not self.minimized:
-            if Rect(self.position + list(self.getControlBarSize())).collidepoint(mousePos) and mouseButtons[0]:
+            if Rect(self.position + [self.getWindowWidth()-183,20]).collidepoint(mousePos) and mouseButtons[0] and focused:
                 if not self.lastButtonState[0] and mouseButtons[0]:
                     self.difX = self.position[0] - mousePos[0]
                     self.difY = self.position[1] - mousePos[1]
@@ -66,14 +68,14 @@ class Window:
                     self.unMaximize()
                     self.position = [0,0]
                     self.resize(availableSpace.size)
-            if self.minimizeButtonRect.collidepoint(canvasMousePos) and mouseButtons[0]:
+            if self.minimizeButtonRect.collidepoint(canvasMousePos) and mouseButtons[0] and not self.lastButtonState[0]:
                 self.minimize()
-            elif self.growButtonRect.collidepoint(canvasMousePos) and mouseButtons[0]:
+            elif self.growButtonRect.collidepoint(canvasMousePos) and mouseButtons[0] and not self.lastButtonState[0]:
                 if self.maximized:
                     self.unMaximize()
                 else:
                     self.maximize(availableSpace)
-            elif self.closeButtonRect.collidepoint(canvasMousePos) and mouseButtons[0]:
+            elif self.closeButtonRect.collidepoint(canvasMousePos) and mouseButtons[0] and not self.lastButtonState[0]:
                 self.close()
         self.lastButtonState = mouseButtons
     def minimize(self):
