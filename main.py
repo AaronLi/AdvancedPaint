@@ -1,13 +1,15 @@
 from pygame import *
-import lib.window, lib.deskenv
 
 running = True
 screen = display.set_mode((1280,720),RESIZABLE)
-canvas = lib.window.Window()
-testWindow2 = lib.window.Window("Heyyo Big window",70,70,400,200)
+import lib.window, lib.deskenv
+canvas = lib.window.Window("Super long window name that won't fit into anything")
+testWindow2 = lib.window.Window("Heyyo Big Small window",70,70,400,200)
 desktop = lib.deskenv.DeskEnv(screen.get_size())
+mouse.set_visible(False)
 desktop.addWindow(canvas)
 desktop.addWindow(testWindow2)
+clockity = time.Clock()
 while running:
     for e in event.get():
         if e.type==QUIT:
@@ -28,4 +30,5 @@ while running:
 
     display.flip()
     oMPos = mPos
+    clockity.tick(60)
 quit()
