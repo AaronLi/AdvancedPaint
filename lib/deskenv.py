@@ -33,14 +33,19 @@ class DeskEnv:
             if self.windows[i].minimized and not self.windows[i].closed:
                 minimizedWindows.append(self.windows[i])
                 del self.windows[i]
-            if resizeHover[lib.window.Window.WINDOW_TOP] or resizeHover[lib.window.Window.WINDOW_BOTTOM]:
-                self.currentCursor = arrow_ns
-                changedCursor = True
-            elif resizeHover[lib.window.Window.WINDOW_LEFT] or resizeHover[lib.window.Window.WINDOW_RIGHT]:
-                self.currentCursor = arrow_we
-                changedCursor = True
-            if not changedCursor:
-                self.currentCursor = arrow_cursor
+            if i==len(self.windows)-1:
+                if resizeHover[lib.window.Window.WINDOW_TOP] or resizeHover[lib.window.Window.WINDOW_BOTTOM]:
+                    self.currentCursor = arrow_ns
+                    changedCursor = True
+                elif resizeHover[lib.window.Window.WINDOW_LEFT] or resizeHover[lib.window.Window.WINDOW_RIGHT]:
+                    self.currentCursor = arrow_we
+                    changedCursor = True
+                if not changedCursor:
+                    self.currentCursor = arrow_cursor
+
+        for i in range(len(self.windows) - 1, -1, -1):
+            if self.windows[i].crashed:
+                del self.windows[i]
         for i in range(len(self.windows) - 1, -1, -1):
             if self.windows[i].closed and not self.lastButtonState[0] and buttonPress[0]:
                 del self.windows[i]
