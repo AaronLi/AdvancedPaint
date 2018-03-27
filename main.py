@@ -1,17 +1,23 @@
 from pygame import *
-import lib.windowedprogram
-import programs.canvas.canvas, programs.toolbox.toolbox, programs.layers.layers
 running = True
 screen = display.set_mode((1480,800),RESIZABLE)
-import lib.window, lib.deskenv
-canvas = lib.window.Window(program=programs.canvas.canvas.Canvas)
-toolbox = lib.window.Window(program=programs.toolbox.toolbox.Toolbox)
-layers = lib.window.Window(program=programs.layers.layers.Layers, xPos = 1000)
-desktop = lib.deskenv.DeskEnv(screen.get_size())
+import programs.toolbox.toolboxdata as toolboxdata
+import lib.layerdata as layerData
+import lib.window as window
+import programs.canvas.canvas as canvas
+import programs.layers.layers as layers
+import programs.toolbox.toolbox as toolbox
+import lib.deskenv as deskenv
+tbData = toolboxdata.ToolboxData()
+lData = layerData.LayerData()
+canvasWin = window.Window(program=canvas.Canvas, programParameters={'toolboxData':tbData, 'layerData':lData})
+toolboxWin = window.Window(program=toolbox.Toolbox, programParameters={'toolboxData':tbData})
+layersWin = window.Window(program=layers.Layers, xPos = 1000, programParameters={'layerData':lData})
+desktop = deskenv.DeskEnv(screen.get_size())
 mouse.set_visible(False)
-desktop.addWindow(canvas)
-desktop.addWindow(toolbox)
-desktop.addWindow(layers)
+desktop.addWindow(canvasWin)
+desktop.addWindow(toolboxWin)
+desktop.addWindow(layersWin)
 clockity = time.Clock()
 while running:
     for e in event.get():

@@ -1,10 +1,11 @@
 from pygame import Surface
 class WindowedProgram:
-    def __init__(self,availableSpace, window, name='Unnamed'):
-        self.name = name
+    def __init__(self,availableSpace, window, additionalParams = {}):
+        self.name = additionalParams['name'] if 'name' in additionalParams else 'unnamed'
         self.window = window
         self.window.windowTitle = self.name
         self.availableSpace = availableSpace
+        self.kwargs = additionalParams
     def draw(self, mousePos, mouseButtons):
         outSurf = Surface(self.availableSpace)
         outSurf.fill((255,0,255))

@@ -1,6 +1,6 @@
 from pygame import Surface, draw, Rect, font, image
 import traceback, sys
-import lib.tools, lib.windowedprogram
+import lib.mathTools, lib.windowedprogram
 
 font.init()
 lato = font.Font("fonts/Lato-Regular.ttf", 15)
@@ -18,7 +18,7 @@ class Window:
     WINDOW_RIGHT = 2
     WINDOW_BOTTOM = 3
 
-    def __init__(self, xPos=10, yPos=10, width=800, height=620, program=lib.windowedprogram.WindowedProgram):
+    def __init__(self, xPos=10, yPos=10, width=800, height=620, program=lib.windowedprogram.WindowedProgram, programParameters = None):
         self.windowTitle = ""
         self.position = [xPos, yPos]
         self.windowCanvas = Surface((width, height))
@@ -37,7 +37,7 @@ class Window:
         self.previousPos = self.position
         self.crashed = False
         self.resizable = True
-        self.program = program(self.getDrawArea(), self)
+        self.program = program(self.getDrawArea(), self, programParameters)
         self.program.configure()
 
     def draw(self, surface: Surface, mousePos, mouseButtons, focused, availableSpace):
@@ -54,7 +54,7 @@ class Window:
         else:
             draw.rect(self.windowCanvas, (250, 250, 250), (0, 0, self.getWindowWidth(), 20))
             draw.rect(self.windowCanvas, (250, 250, 250), (0, 0, self.getWindowWidth(), self.getWindowHeight()), 4)
-        windowTitleRender = lato.render(lib.tools.clipText(self.windowTitle, self.getWindowWidth() - 185, lato), True,
+        windowTitleRender = lato.render(lib.mathTools.clipText(self.windowTitle, self.getWindowWidth() - 185, lato), True,
                                         (60, 60, 60) if focused else (200, 200, 200))
         self.windowCanvas.blit(windowTitleRender, (2, 0))
         if self.closeButtonRect.collidepoint(normalisedMousePos):
@@ -200,7 +200,7 @@ class Window:
                     self.maximize(availableSpace)
             elif self.closeButtonRect.collidepoint(canvasMousePos) and mouseButtons[0] and not self.lastButtonState[0]:
                 self.close()
-        if focused:
+        if focused and not self.minimized:
             try:
                 self.program.update(self.programMousePos(mousePos), mouseButtons)
             except:

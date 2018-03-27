@@ -1,5 +1,5 @@
 from pygame import Rect, draw, font, image
-import lib.cursor, lib.window, lib.tools
+import lib.cursor, lib.window, lib.mathTools
 font.init()
 minimizedWindowFont = font.Font("fonts/Lato-Regular.ttf",17)
 
@@ -71,7 +71,7 @@ class DeskEnv:
                 draw.rect(surface, (190, 190, 190), windowBarRect)
             else:
                 draw.rect(surface, (200, 200, 200), windowBarRect)
-            minimizedLabel = minimizedWindowFont.render(lib.tools.clipText(v.windowTitle,194, minimizedWindowFont),True,(255,255,255))
+            minimizedLabel = minimizedWindowFont.render(lib.mathTools.clipText(v.windowTitle, 194, minimizedWindowFont), True, (255, 255, 255))
             surface.blit(minimizedLabel,(i*201+3, self.size[1]-20-minimizedLabel.get_height()//2))
         self.currentCursor.draw(surface, mousePos, 0.6)
     def addWindow(self, window):
